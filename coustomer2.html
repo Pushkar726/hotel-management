@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bagade Bhojanalay | Authentic Veg</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- BRAND THEME --- */
+        :root {
+            --maroon: #7B1113;       /* Royal Marathi Maroon */
+            --gold: #D4AF37;         /* Premium Gold Accent */
+            --green: #2E7D32;        /* Veg Green */
+            --cream: #FCF9F2;        /* Paper Background */
+            --text: #2D2D2D;         /* Dark Grey Text */
+            --gray: #BDBDBD;         /* Disabled State */
+            --orange: #EF6C00;       /* Pending State */
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: 'Noto Sans Devanagari', sans-serif; 
+            background-color: var(--cream); 
+            color: var(--text);
+            margin: 0; padding: 0; 
+            padding-bottom: 90px; /* Space for sticky footer */
+        }
+
+        /* --- HEADER --- */
+        .header {
+            background: var(--maroon);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
+        .header p { margin: 5px 0 0; font-size: 0.8rem; font-family: 'Poppins'; opacity: 0.9; }
+
+        /* --- STEP INDICATOR --- */
+        .steps {
+            display: flex; justify-content: space-around;
+            background: white; padding: 10px;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.85rem; color: #888;
+        }
+        .step.active { color: var(--maroon); font-weight: bold; border-bottom: 2px solid var(--maroon); }
+
+        /* --- SECTION 1: TIFFIN BANNER --- */
+        .tiffin-banner {
+            background: linear-gradient(135deg, #7B1113, #a3161a);
+            color: white;
+            margin: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(123, 17, 19, 0.2);
+            position: relative; overflow: hidden;
+        }
+        .tiffin-tag { background: var(--gold); color: black; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .tiffin-price { font-size: 1.4rem; font-weight: bold; margin: 10px 0; color: var(--gold); }
+        
+        /* Reviews Scroll */
+        .reviews-box {
+            display: flex; overflow-x: auto; gap: 10px; padding: 10px 15px;
+            scrollbar-width: none;
+        }
+        .review-card {
+            min-width: 220px; background: white; padding: 10px; border-radius: 8px;
+            border: 1px solid #eee; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* --- MENU LIST --- */
+        .cat-title {
+            background: #EFEBE9; color: var(--maroon);
+            padding: 10px 15px; font-weight: bold; font-size: 1rem;
+            border-left: 5px solid var(--maroon); margin-top: 20px;
+        }
+
+        .menu-item {
+            background: white; padding: 15px; 
+            border-bottom: 1px solid #eee;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .item-info h3 { margin: 0; font-size: 1.1rem; color: #222; }
+        .item-info span { display: block; font-size: 0.8rem; color: #666; font-family: 'Poppins'; margin-top: 2px; }
+        .price { color: var(--green); font-weight: bold; margin-top: 5px; }
+
+        .add-btn {
+            background: white; border: 1.5px solid var(--green); color: var(--green);
+            padding: 8px 20px; border-radius: 6px; font-weight: bold; font-family: 'Poppins';
+            transition: 0.2s;
+        }
+        .add-btn.added { background: var(--green); color: white; border-color: var(--green); }
+
+        /* --- FORMS & INPUTS --- */
+        .form-group { padding: 15px; background: white; margin: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--maroon); }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; background: #fafafa; }
+
+        /* --- PAYMENT UI --- */
+        .pay-option {
+            border: 2px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 10px;
+            display: flex; align-items: center; cursor: pointer; background: white;
+        }
+        .pay-option.selected { border-color: var(--maroon); background: #fffbfb; }
+        
+        /* QR & Status States */
+        .verification-box { 
+            display: none; text-align: center; padding: 20px; 
+            background: white; margin-top: 15px; border-radius: 10px; border: 2px dashed #ddd; 
+        }
+        .status-badge {
+            display: inline-block; padding: 8px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; margin-top: 10px;
+        }
+        .status-pending { background: #FFF3E0; color: var(--orange); }
+        .status-success { background: #E8F5E9; color: var(--green); }
+
+        /* --- FOOTER BAR --- */
+        .footer-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: white; padding: 15px;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000;
+        }
+        .total-box { font-size: 0.9rem; color: #555; }
+        .total-price { font-size: 1.3rem; font-weight: bold; color: var(--maroon); }
+        
+        .action-btn {
+            background: var(--maroon); color: white; border: none;
+            padding: 12px 30px; border-radius: 8px; font-size: 1rem; font-weight: bold;
+            box-shadow: 0 4px 6px rgba(123, 17, 19, 0.3);
+        }
+        .action-btn:disabled { background: var(--gray); box-shadow: none; cursor: not-allowed; }
+
+        /* Screen Visibility Logic */
+        .screen { display: none; animation: fadeIn 0.3s ease; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>बागडे भोजनालय</h1>
+        <p>PURE VEG FAMILY RESTAURANT</p>
+    </div>
+
+    <div class="steps">
+        <span id="step1-ind" class="step active">1. Order</span>
+        <span id="step2-ind" class="step">2. Details</span>
+        <span id="step3-ind" class="step">3. Payment</span>
+    </div>
+
+    <div id="screen-1" class="screen active">
+        
+        <div class="tiffin-banner">
+            <span class="tiffin-tag">BEST SELLER</span>
+            <h2>मासिक टिफिन सेवा</h2>
+            <p>भाजी, चपाती (4), डाळ, भात. (घरगुती चव!)</p>
+            <div class="tiffin-price">₹3000 / month</div>
+            <button class="add-btn" style="background:white; border:none; color:var(--maroon)" onclick="addItem('Monthly Tiffin', 3000, this)">+ Add Subscription</button>
+        </div>
+
+        <div class="reviews-box">
+            <div class="review-card">"Best puri bhaji in town!" <br>⭐⭐⭐⭐⭐ - <b>Rahul P.</b></div>
+            <div class="review-card">"Very clean and hygienic." <br>⭐⭐⭐⭐⭐ - <b>Sneha K.</b></div>
+            <div class="review-card">"Perfect for parties." <br>⭐⭐⭐⭐⭐ - <b>Amit D.</b></div>
+        </div>
+
+        <div id="menu-container"></div>
+        <div style="height: 20px;"></div>
+    </div>
+
+
+    <div id="screen-2" class="screen">
+        <div class="cat-title">Bill Details / बिल तपशील</div>
+        
+        <div id="order-summary" style="background:white; padding:15px; margin:10px; border-radius:8px;">
+            </div>
+
+        <div class="form-group">
+            <label>Table Number (टेबल क्रमांक)</label>
+            <select id="table-select" class="form-control">
+                <option value="">Select Table</option>
+                <option value="1">Table 1</option>
+                <option value="2">Table 2</option>
+                <option value="3">Table 3</option>
+                <option value="4">Table 4</option>
+                <option value="5">Table 5</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Mobile Number (मोबाईल)</label>
+            <input type="tel" id="mobile-input" class="form-control" placeholder="10 digit number">
+        </div>
+
+        <div style="padding:15px; font-size:0.8rem; color:#666; text-align:center;">
+            * आम्ही पार्टी ऑर्डर देखील स्वीकारतो.
+        </div>
+    </div>
+
+
+    <div id="screen-3" class="screen">
+        <div class="cat-title">Payment / पैसे भरा</div>
+
+        <div style="padding:15px;">
+            <div style="text-align:center; margin-bottom:20px;">
+                <span style="font-size:1rem; color:#666;">Total Payable Amount</span><br>
+                <span style="font-size:2.5rem; font-weight:bold; color:var(--maroon);">₹<span id="pay-amount">0</span></span>
+            </div>
+
+            <div class="pay-option" id="opt-upi" onclick="selectPayment('UPI')">
+                <div style="width:100%">
+                    <strong>Online Payment (UPI)</strong><br>
+                    <small>GPay / PhonePe / Paytm</small>
+                </div>
+            </div>
+
+            <div class="pay-option" id="opt-cash" onclick="selectPayment('CASH')">
+                <div style="width:100%">
+                    <strong>Cash at Counter (रोख)</strong><br>
+                    <small>Pay cash to manager</small>
+                </div>
+            </div>
+
+            <div id="verify-upi" class="verification-box">
+                <p><b>Scan QR to Pay</b></p>
+                <img id="qr-code-img" src="" style="width:150px; height:150px; opacity:0.8;" alt="QR Code">
+                <br>
+                <div id="upi-status" class="status-badge status-pending">Waiting for Payment...</div>
+                
+                <button onclick="simulateSuccess('UPI')" style="margin-top:10px; font-size:0.7rem; display:block; margin:10px auto; border:1px solid #ccc; background:#eee;">(Simulate Success)</button>
+            </div>
+
+            <div id="verify-cash" class="verification-box">
+                <p>Please go to the counter and pay cash.</p>
+                <div id="cash-status" class="status-badge status-pending">Waiting for Manager Approval...</div>
+
+                <button onclick="simulateSuccess('CASH')" style="margin-top:10px; font-size:0.7rem; display:block; margin:10px auto; border:1px solid #ccc; background:#eee;">(Simulate Manager Approval)</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="footer-bar">
+        <div class="total-box">
+            Total Items: <span id="ft-count">0</span><br>
+            <span class="total-price">₹<span id="ft-total">0</span></span>
+        </div>
+        <button id="main-btn" class="action-btn" onclick="handleNext()">Next Step →</button>
+    </div>
+
+
+    <script>
+        // --- DATA ---
+        const menuData = {
+            "Thali System (थाळी)": [
+                { m: "वेज राईस प्लेट", e: "Veg Rice Plate", p: 80 },
+                { m: "फुल थाळी (अनलिमिटेड)", e: "Full Thali (Unlimited)", p: 120 },
+                { m: "स्पेशल वेज थाळी", e: "Special Veg Thali", p: 160 }
+            ],
+            "Breakfast (नाश्ता)": [
+                { m: "कांदा पोहे", e: "Kanda Poha", p: 30 },
+                { m: "उपमा", e: "Upma", p: 30 },
+                { m: "वडा पाव (2)", e: "Vada Pav", p: 40 },
+                { m: "सा. खिचडी", e: "Sabudana Khichdi", p: 50 },
+                { m: "मिसळ पाव", e: "Misal Pav", p: 80 }
+            ],
+            "Daily Sabji (रोजच्या भाज्या)": [
+                { m: "बटाटा रस्सा", e: "Potato Curry", p: 70 },
+                { m: "शेपू भाजी", e: "Shepu Bhaji", p: 70 },
+                { m: "मेथी भाजी", e: "Methi Masala", p: 80 },
+                { m: "भेंडी मसाला", e: "Bhendi Masala", p: 80 }
+            ],
+            "Special Orders (स्पेशल)": [
+                { m: "शेव भाजी", e: "Shev Bhaji (Spicy)", p: 110 },
+                { m: "पनीर मसाला", e: "Paneer Masala", p: 160 },
+                { m: "काजू करी", e: "Kaju Curry", p: 180 },
+                { m: "पाव भाजी", e: "Pav Bhaji", p: 100 },
+                { m: "पुरी भाजी", e: "Puri Bhaji (5pc)", p: 90 }
+            ],
+            "Roti & Rice (पोळी/भात)": [
+                { m: "चपाती", e: "Wheat Chapati", p: 12 },
+                { m: "बाजरी भाकरी", e: "Bhakari", p: 25 },
+                { m: "जिरा राईस", e: "Jeera Rice", p: 80 },
+                { m: "डाळ खिचडी", e: "Dal Khichdi", p: 120 }
+            ],
+            "Beverages (पेये)": [
+                { m: "स्पेशल चहा", e: "Special Tea", p: 15 },
+                { m: "कॉफी", e: "Hot Coffee", p: 25 },
+                { m: "मसाला दूध", e: "Masala Milk", p: 35 }
+            ]
+        };
+
+        // --- STATE ---
+        let cart = [];
+        let currentStep = 1;
+        let isPaymentVerified = false;
+        let selectedPaymentMode = null;
+
+        // --- INIT MENU ---
+        const container = document.getElementById('menu-container');
+        for (const [category, items] of Object.entries(menuData)) {
+            let sectionHtml = `<div class="cat-title">${category}</div>`;
+            items.forEach(item => {
+                sectionHtml += `
+                <div class="menu-item">
+                    <div class="item-info">
+                        <h3>${item.m}</h3>
+                        <span>${item.e}</span>
+                        <div class="price">₹${item.p}</div>
+                    </div>
+                    <button class="add-btn" onclick="addItem('${item.m}', ${item.p}, this)">ADD</button>
+                </div>`;
+            });
+            container.innerHTML += sectionHtml;
+        }
+
+        // --- CORE FUNCTIONS ---
+
+        function addItem(name, price, btn) {
+            cart.push({ name, price });
+            updateTotal();
+            
+            // Visual feedback
+            btn.classList.add('added');
+            btn.innerText = "✓ ADDED";
+            setTimeout(() => {
+                btn.classList.remove('added');
+                btn.innerText = "ADD";
+            }, 1000);
+        }
+
+        function updateTotal() {
+            let total = cart.reduce((sum, i) => sum + i.price, 0);
+            let count = cart.length;
+            
+            document.getElementById('ft-total').innerText = total;
+            document.getElementById('ft-count').innerText = count;
+            document.getElementById('pay-amount').innerText = total;
+        }
+
+        function handleNext() {
+            if (currentStep === 1) {
+                if (cart.length === 0) return alert("Please select items first!");
+                goToStep(2);
+            } 
+            else if (currentStep === 2) {
+                const table = document.getElementById('table-select').value;
+                const mobile = document.getElementById('mobile-input').value;
+                
+                if (!table) return alert("Please select Table Number");
+                if (mobile.length < 10) return alert("Please enter valid Mobile Number");
+                
+                goToStep(3);
+                // Change Button Text for final step
+                const btn = document.getElementById('main-btn');
+                btn.innerText = "PLACE ORDER (किचनमध्ये पाठवा)";
+                btn.disabled = true; // Strict: Lock until payment
+                btn.style.background = "#BDBDBD"; // Grey out
+            }
+            else if (currentStep === 3) {
+                // Final Order Placement
+                if (!isPaymentVerified) return alert("Payment pending!");
+                
+                const orderDetails = {
+                    table: document.getElementById('table-select').value,
+                    mobile: document.getElementById('mobile-input').value,
+                    items: cart,
+                    total: document.getElementById('ft-total').innerText,
+                    payment: selectedPaymentMode
+                };
+                
+                console.log("ORDER SENT TO SERVER:", orderDetails);
+                alert("✅ ORDER SUCCESS! \nKitchen has received your order for Table " + orderDetails.table);
+                location.reload();
+            }
+        }
+
+        function goToStep(step) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+
+            // Show target
+            document.getElementById(`screen-${step}`).classList.add('active');
+            document.getElementById(`step${step}-ind`).classList.add('active');
+            currentStep = step;
+
+            // Specific Screen Logic
+            if (step === 2) {
+                renderBillSummary();
+            }
+        }
+
+        function renderBillSummary() {
+            const wrapper = document.getElementById('order-summary');
+            wrapper.innerHTML = cart.map(i => 
+                `<div style="display:flex; justify-content:space-between; margin-bottom:5px; border-bottom:1px dashed #eee; padding-bottom:5px;">
+                    <span>${i.name}</span> <span>₹${i.price}</span>
+                </div>`
+            ).join('');
+            
+            // Add Total Row
+            const total = cart.reduce((sum, i) => sum + i.price, 0);
+            wrapper.innerHTML += `<div style="display:flex; justify-content:space-between; margin-top:10px; font-weight:bold; font-size:1.1rem; color:var(--maroon);">
+                <span>Total Bill</span> <span>₹${total}</span>
+            </div>`;
+        }
+
+        // --- PAYMENT LOGIC ---
+
+        function selectPayment(mode) {
+            selectedPaymentMode = mode;
+            isPaymentVerified = false; // Reset status on switch
+            
+            // UI Toggle
+            document.getElementById('opt-upi').classList.remove('selected');
+            document.getElementById('opt-cash').classList.remove('selected');
+            document.getElementById('verify-upi').style.display = 'none';
+            document.getElementById('verify-cash').style.display = 'none';
+
+            if (mode === 'UPI') {
+                document.getElementById('opt-upi').classList.add('selected');
+                document.getElementById('verify-upi').style.display = 'block';
+                
+                // Generate QR
+                const total = document.getElementById('ft-total').innerText;
+                const upiLink = `upi://pay?pa=bagade@upi&pn=BagadeBhojanalay&am=${total}&cu=INR`;
+                document.getElementById('qr-code-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiLink)}`;
+                
+                // Reset Badge
+                const badge = document.getElementById('upi-status');
+                badge.className = "status-badge status-pending";
+                badge.innerText = "Waiting for Payment...";
+            } 
+            else {
+                document.getElementById('opt-cash').classList.add('selected');
+                document.getElementById('verify-cash').style.display = 'block';
+                
+                // Reset Badge
+                const badge = document.getElementById('cash-status');
+                badge.className = "status-badge status-pending";
+                badge.innerText = "Waiting for Manager Approval...";
+            }
+        }
+
+        function simulateSuccess(mode) {
+            isPaymentVerified = true;
+            
+            // Unlock Main Button
+            const btn = document.getElementById('main-btn');
+            btn.disabled = false;
+            btn.style.background = "var(--green)";
+            btn.style.cursor = "pointer";
+            btn.innerHTML = "CONFIRM & PLACE ORDER ✓";
+
+            // Update Badges
+            if (mode === 'UPI') {
+                const badge = document.getElementById('upi-status');
+                badge.className = "status-badge status-success";
+                badge.innerText = "Payment Received ✓";
+            } else {
+                const badge = document.getElementById('cash-status');
+                badge.className = "status-badge status-success";
+                badge.innerText = "Cash Accepted by Counter ✓";
+            }
+        }
+    </script>
+</body>
+</html>
